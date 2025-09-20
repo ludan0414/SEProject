@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hello World UI</title>
+  <style>
+    :root{
+      --text-size: clamp(48px, 8vw, 120px);
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #eef2ff, #ffe4e6, #fef9c3);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Animated colorful text */
+    h1{
+      font-weight: 800;
+      font-size: var(--text-size);
+      margin: 0;
+      z-index: 2;
+      line-height: 0.92;
+      /* multi-color gradient that will shift */
+      background: linear-gradient(90deg, #4f46e5 0%, #ec4899 25%, #f59e0b 50%, #21ba87 75%, #06b6d4 100%);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-align: center;
+      /* subtle outline for contrast */
+      text-shadow: 0 6px 20px rgba(15,23,42,0.08);
+      animation: gradientShift 20s linear infinite;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    @keyframes gradientShift{
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* soft moving blobs in background */
+    .blob{
+      position:absolute;
+      border-radius:50%;
+      filter: blur(70px);
+      opacity:0.75;
+      animation: float 16s infinite ease-in-out;
+      transform-origin: center;
+      will-change: transform, filter, opacity;
+    }
+    .blob1{ width:420px; height:420px; background: #ec4899; top:-120px; left:-120px; animation-delay:0s; }
+    .blob2{ width:360px; height:360px; background: #4f46e5; bottom:-130px; right:-90px; animation-delay:4s; }
+
+    @keyframes float{
+      0%{
+        transform: translate(0,0) scale(1);
+        filter: blur(70px) brightness(1);
+        opacity:0.7;
+      }
+      25%{
+        transform: translate(18px,-28px) scale(1.06);
+        filter: blur(78px) brightness(1.12);
+        opacity:0.78;
+      }
+      50%{
+        transform: translate(-12px,22px) scale(0.94);
+        filter: blur(66px) brightness(0.95);
+        opacity:0.7;
+      }
+      75%{
+        transform: translate(12px,-18px) scale(1.04);
+        filter: blur(74px) brightness(1.06);
+        opacity:0.76;
+      }
+      100%{
+        transform: translate(0,0) scale(1);
+        filter: blur(70px) brightness(1);
+        opacity:0.7;
+      }
+    }
+
+    /* ensure text stays readable on small screens */
+    @media(max-width:420px){
+      h1{ font-size: clamp(36px, 12vw, 64px); }
+      .blob1,.blob2,.blob3{ filter: blur(50px); }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="blob blob1" aria-hidden="true"></div>
+  <div class="blob blob2" aria-hidden="true"></div>
+
+  <h1>Hello World</h1>
+</body>
+</html>
