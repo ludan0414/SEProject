@@ -1,0 +1,45 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f8f9fb;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  padding: 20px 60px;
+}
+
+.main-content {
+  flex: 2;
+  margin-right: 20px;
+}
+
+.sidebar {
+  flex: 1;
+  max-width: 300px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.icon-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: #666;
+}
+
+.icon-row span {
+  cursor: pointer;
+  user-select: none;
+}
+
+button {
+  cursor: pointer;
+}
