@@ -1,7 +1,5 @@
 <template>
   <div class="login-page">
-    <NavBar />
-
     <div class="login-container">
       <div class="login-card">
         <h2>登录</h2>
@@ -35,20 +33,34 @@
 
 <script setup>
 import { ref } from "vue";
-// import NavBar from "../components/NavBar.vue";
+import { useRouter } from "vue-router";
+import { login, auth } from "../auth";
+
+// 如果已登录，直接跳回首页
+const router = useRouter();
+if (auth.user) router.push("/");
 
 const email = ref("");
 const password = ref("");
 const showPassword = ref(false);
-
 const handleLogin = () => {
   if (!email.value || !password.value) {
     alert("请输入完整信息！");
     return;
   }
-  // 模拟登录逻辑
-  alert(`登录成功：${email.value}`);
-  window.location.href = "/";
+
+  // 模拟登录：把邮箱作为用户名，保存到 auth 中
+  const user = {
+    name: email.value.split("@")[0] || email.value,
+    email: email.value,
+    avatar: `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(
+      email.value
+    )}`,
+  };
+  login(user);
+
+  // 跳转回首页（或上一个页面）
+  router.push("/");
 };
 
 const goRegister = () => {
