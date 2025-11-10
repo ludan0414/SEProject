@@ -70,7 +70,27 @@ def get_blog(blog_id):
         }), 200
     except Exception as e:
         return jsonify({'error': '获取博客失败'}), 500
+@blog_bp.route('/blog/<blog_id>', methods=['POST'])
+def post_blog_details(blog_id):
+    try:
+        blog = Blog.query.get(blog_id)
+        if not blog:
+            return jsonify({'error': '博客不存在'}), 404
 
+        return jsonify({
+            'id': blog.id,
+            'title': blog.title,
+            'author': {
+                'id': blog.author.id if blog.author else None,
+                'username': blog.author.username if blog.author else None
+            },
+            # content 以 markdown 原文返回
+            'content': blog.content,
+            'tags': blog.tags.split(',') if blog.tags else [],
+            'created_time': blog.created_at.isoformat()
+        }), 200
+    except Exception:
+        return jsonify({'error': '获取博客失败'}), 500
 @blog_bp.route('/api/blogs', methods=['POST'])
 @jwt_required()
 def create_blog():
