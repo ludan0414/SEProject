@@ -19,9 +19,9 @@ venv/
 .venv/
 backend/.venv/
 
-# Environment variables
-.env
-.env.*
+# # Environment variables
+# .env
+# .env.*
 
 # Database
 *.db
