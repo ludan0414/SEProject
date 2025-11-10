@@ -1,4 +1,38 @@
-frontend/node_modules
+# frontend
+frontend/node_modules/
 frontend/yarn.lock
 frontend/package-lock.json
 frontend/package.json
+
+# Python
+# 忽略所有 __pycache__（任意子目录）
+**/__pycache__/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 虚拟环境
+env/
+venv/
+.venv/
+backend/.venv/
+
+# Environment variables
+.env
+.env.*
+
+# Database
+*.db
+*.sqlite3
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# 本地测试脚本（在 backend）
+backend/testrun.py
