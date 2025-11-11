@@ -10,31 +10,32 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
 import NoteCard from "../components/NoteCard.vue";
 import UserSidebar from "../components/UserSidebar.vue";
 
-const notes = [
-  {
-    author: "wenhao801",
-    date: "05/05 08:45",
-    title: "计算机系统导论笔记",
-    content:
-      "涵盖计算机科学基础概念、算法、数据结构、计算理论等核心知识点，附有丰富实例和习题。",
-    views: 1324,
-    favorites: 1234,
-    likes: 1234,
-    comments: [],
-  },
-  {
-    author: "wenhao802",
-    date: "05/05 08:45",
-    title: "另一个什么笔记",
-    content:
-      "涵盖计算机科学基础概念、算法、数据结构、计算理论等核心知识点，附有丰富实例和习题。",
-    views: 1324,
-    favorites: 1234,
-    likes: 1234,
-    comments: [],
-  },
-];
+const notes = ref([]);
+
+const fetchNotes = async () => {
+  try {
+    const res = await axios.get("http://localhost:5000/api/blogs");
+    notes.value = res.data.blogs.map(b => ({
+      id: b.id,
+      author: b.author,
+      date: new Date(b.created_at).toLocaleString(),
+      title: b.title,
+      content: b.summary,
+      views: Math.floor(Math.random() * 2000), // 临时字段，后端未提供
+      favorites: Math.floor(Math.random() * 500),
+      likes: Math.floor(Math.random() * 500),
+      comments: []
+    }));
+  } catch (err) {
+    console.error("获取博客失败:", err);
+  }
+};
+
+// 组件加载时调用
+onMounted(fetchNotes);
 </script>

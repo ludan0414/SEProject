@@ -4,7 +4,7 @@
       <div class="author">{{ note.author }}</div>
       <div class="date">{{ note.date }}</div>
     </div>
-    <h3>{{ note.title }}</h3>
+    <h3 @click="goToBlog(note.id)">{{ note.title }}</h3>
     <p>{{ note.content }}</p>
 
     <div class="icon-row">
@@ -20,14 +20,19 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import CommentBox from "./CommentBox.vue";
 
 const props = defineProps({ note: Object });
 const showComment = ref(false);
+const router = useRouter();
 
 const toggleComment = () => (showComment.value = !showComment.value);
 const like = () => props.note.likes++;
 const toggleFavorite = () => props.note.favorites++;
+const goToBlog = (id) => {
+  router.push(`/blog/${id}`);
+}
 </script>
 
 <style scoped>

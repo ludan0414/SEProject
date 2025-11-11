@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig({
   plugins: [vue()],
   server: {
-    port: 5173,
+    port: 3000,
     historyApiFallback: true, // ✅ 确保浏览器刷新不丢路由
   },
 })

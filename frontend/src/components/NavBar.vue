@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="logo">PKULab</div>
     <div class="nav-links">
-      <a href="#">首页</a>
+      <a href="#" @click="goHome">首页</a>
       <a href="#">热门</a>
       <a href="#">排行榜</a>
     </div>
@@ -48,6 +48,10 @@ const router = useRouter();
 const user = computed(() => auth.user);
 const defaultAvatar = 
   "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&s=40";
+
+const goHome = () => {
+  router.push("/");
+}
 
 const goLogin = () => {
   router.push("/login");
