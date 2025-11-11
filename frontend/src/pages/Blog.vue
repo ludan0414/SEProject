@@ -1,36 +1,19 @@
 <template>
-  <div class="blog-container">
+   <div class="blog-container" v-if="blog">
     <!-- 文章标题 -->
-    <h1 class="blog-title">计算机系统导论笔记</h1>
+    <h1 class="blog-title">{{ blog.title }}</h1>
 
     <!-- 作者信息 -->
     <div class="blog-author">
       <img src="https://i.pravatar.cc/48" alt="author avatar" />
       <div>
-        <div>wenhao801</div>
-        <div>发布于 2025年5月5日 08:45</div>
+        <div>{{ blog.author.username }}</div>
+        <div>发布于 {{ formatDate(blog.created_at) }}</div>
       </div>
     </div>
 
     <!-- 文章内容 -->
-    <div class="blog-content">
-      <p>
-        本文主要总结了计算机系统的基本概念，包括处理器架构、内存层次结构、输入输出系统等内容。
-      </p>
-      <p>
-        计算机系统是硬件与软件共同组成的复杂体系，它通过编译、链接、运行等阶段实现高级语言到机器执行的过程。
-      </p>
-
-      <h2>一、计算机系统层次结构</h2>
-      <p>
-        从上到下主要包括应用程序层、操作系统层、硬件抽象层、硬件层等。每一层通过接口与下层通信。
-      </p>
-
-      <h2>二、内存层次结构</h2>
-      <p>
-        现代计算机使用缓存（Cache）和虚拟内存机制提高访问效率，同时保证系统的可扩展性。
-      </p>
-    </div>
+    <div class="blog-content markdown-body" ref="contentContainer" v-html="htmlContent"></div>
 
     <!-- 评论区 -->
     <div class="comment-section">
@@ -87,14 +70,26 @@
       </div>
     </div>
   </div>
+
+  <!-- 加载状态 -->
+  <div v-else class="loading">加载中...</div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-// 局部引入 blog.css
+import { ref, onMounted, nextTick } from "vue";
+import { useRoute } from "vue-router";
+import { renderMarkdown } from '../utils/markdown'
+import '../assets/typora-vue-theme/vue-scoped.css' // ✅ Markdown 样式
+
+import axios from "axios";
 import "../assets/blog.css";
 
+const route = useRoute();
+const blog = ref(null);
+const htmlContent = ref('');
 const newComment = ref("");
+const contentContainer = ref(null);
+
 const comments = ref([
   {
     user: "Alice",
@@ -115,6 +110,30 @@ const comments = ref([
     replyText: "",
   },
 ]);
+
+// 获取博客详情
+const fetchBlog = async () => {
+  const id = route.params.id;
+  try {
+    const res = await axios.get(`http://localhost:5000/api/blogs/${id}`);
+    blog.value = res.data;
+    console.log(blog.value.content);
+    htmlContent.value = renderMarkdown(blog.value.content);
+
+    await nextTick();
+    addCopyButtons();
+    console.log(contentContainer.value);
+    renderMathInElement(contentContainer.value);
+  } catch (err) {
+    console.error("获取博客详情失败:", err);
+  }
+};
+
+// 格式化时间
+const formatDate = (isoString) => {
+  const d = new Date(isoString);
+  return d.toLocaleString("zh-CN", { hour12: false });
+};
 
 const addComment = () => {
   if (!newComment.value.trim()) return;
@@ -145,4 +164,35 @@ const submitReply = (index) => {
   c.replyText = "";
   c.showReplyBox = false;
 };
+
+function addCopyButtons() {
+  const pres = document.querySelectorAll('pre.hljs')
+  pres.forEach(pre => {
+    // 避免重复添加
+    if (pre.querySelector('.code-copy-btn')) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.textContent = 'Copy';
+
+    // 点击事件
+    btn.addEventListener('click', () => {
+      const code = pre.querySelector('code').innerText
+      navigator.clipboard.writeText(code).then(() => {
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = 'Copy' }, 1200);
+      })
+    })
+
+    pre.prepend(btn)
+  })
+}
+
+function renderMathInElement(container) {
+  if(window.MathJax) {
+    window.MathJax.typesetPromise([container])
+  }
+}
+
+onMounted(fetchBlog);
 </script>

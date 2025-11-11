@@ -10,7 +10,7 @@ const routes = [
     component: DefaultLayout,
     children: [
       { path: "", component: Home }, // 首页
-      { path: "/blog", component: Blog},
+      { path: "blog/:id", component: Blog},
     ],
   },
   {
