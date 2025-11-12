@@ -1,31 +1,34 @@
 <template>
-  <div class="login-page">
-    <div class="login-container">
-      <div class="login-card">
-        <h2>登录</h2>
+  <div class="login-app-page">
+    <NavBar></NavBar>
+    <div class="login-page">
+      <div class="login-container">
+        <div class="login-card">
+          <h2>登录</h2>
 
-        <form @submit.prevent="handleLogin">
-          <label>邮箱</label>
-          <input v-model="email" type="email" placeholder="请输入邮箱" required />
+          <form @submit.prevent="handleLogin">
+            <label>用户名</label>
+            <input v-model="username" type="text" placeholder="请输入用户名" required />
 
-          <label>密码</label>
-          <div class="password-box">
-            <input
-              v-model="password"
-              :type="showPassword ? 'text' : 'password'"
-              placeholder="请输入密码"
-              required
-            />
-            <span class="toggle" @click="showPassword = !showPassword">
-              {{ showPassword ? '隐藏' : '显示' }}
-            </span>
-          </div>
+            <label>密码</label>
+            <div class="password-box">
+              <input
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="请输入密码"
+                required
+              />
+              <span class="toggle" @click="showPassword = !showPassword">
+                {{ showPassword ? '隐藏' : '显示' }}
+              </span>
+            </div>
 
-          <a href="#" class="forgot">忘记密码？</a>
+            <a href="#" class="forgot">忘记密码？</a>
 
-          <button type="submit" class="login-btn">登录</button>
-          <button type="button" class="register-btn" @click="goRegister">注册</button>
-        </form>
+            <button type="submit" class="login-btn">登录</button>
+            <button type="button" class="register-btn" @click="goRegister">注册</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -35,42 +38,70 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { login, auth } from "../auth";
+import NavBar from "../components/NavBar.vue";
 
 // 如果已登录，直接跳回首页
 const router = useRouter();
 if (auth.user) router.push("/");
 
-const email = ref("");
+const username = ref("");
 const password = ref("");
 const showPassword = ref(false);
-const handleLogin = () => {
-  if (!email.value || !password.value) {
+const handleLogin = async () => {
+  if (!username.value || !password.value) {
     alert("请输入完整信息！");
     return;
   }
 
-  // 模拟登录：把邮箱作为用户名，保存到 auth 中
-  const user = {
-    name: email.value.split("@")[0] || email.value,
-    email: email.value,
-    avatar: `https://api.dicebear.com/6.x/identicon/svg?seed=${encodeURIComponent(
-      email.value
-    )}`,
-  };
-  login(user);
+  try {
+    const res = await fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username.value, // 后端要求 username
+        password: password.value,
+      }),
+    });
 
-  // 跳转回首页（或上一个页面）
-  router.push("/");
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "登录失败");
+      return;
+    }
+
+    // 登录成功：保存 token 和 user
+    login(data.user, data.token);
+
+    router.push("/");
+  } catch (err) {
+    console.error("登录请求失败", err);
+    alert("服务器连接失败");
+  }
 };
 
 const goRegister = () => {
-  alert("注册功能暂未开放。");
+  router.push("/register");
 };
 </script>
 
 <style scoped>
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.login-app-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* 整个页面最小高度是屏幕高度 */
+}
+
 .login-page {
-  min-height: 100vh;
+  flex: 1;
   background: linear-gradient(120deg, #ff3cac, #784ba0, #2b86c5);
   display: flex;
   flex-direction: column;
@@ -88,7 +119,7 @@ const goRegister = () => {
   background: #fff;
   padding: 2.5rem;
   border-radius: 16px;
-  width: 360px;
+  width: 440px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -128,29 +159,40 @@ input {
 }
 
 .forgot {
-  text-align: right;
+  display: inline; 
   font-size: 0.85rem;
   color: #666;
-  margin-bottom: 1rem;
   text-decoration: none;
+  margin-bottom: 1em;
+  cursor: pointer;
+  align-self: flex-end; /* 让文字靠右 */
 }
 
 .login-btn {
-  background-color: #ccc;
+  background-color: #2196f3;
   border: none;
   color: #fff;
   padding: 0.6rem;
   border-radius: 999px;
   cursor: pointer;
   margin-bottom: 0.75rem;
+  transition: background-color 0.3s;
+}
+
+.login-btn:hover {
+  background-color: #1976d2;
 }
 
 .register-btn {
-  background-color: #2196f3;
+  background-color: #ccc;
   border: none;
-  color: white;
+  color: #333;
   padding: 0.6rem;
   border-radius: 999px;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+.register-btn:hover {
+  background-color: #bbb;
 }
 </style>

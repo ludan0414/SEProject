@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="logo">PKULab</div>
     <div class="nav-links">
-      <a href="#">首页</a>
+      <a href="#" @click="goHome">首页</a>
       <a href="#">热门</a>
       <a href="#">排行榜</a>
     </div>
@@ -24,7 +24,7 @@
           <!-- 下拉菜单：hover 时显示；把用户名放到菜单顶部 -->
           <div class="user-dropdown">
             <div class="dropdown-header">
-              <div class="dropdown-username">{{ user.name }}</div>
+              <div class="dropdown-username">{{ user.username }}</div>
               <div class="dropdown-email">{{ user.email }}</div>
             </div>
             <button class="dropdown-item" @click="goProfile">个人资料</button>
@@ -48,6 +48,10 @@ const router = useRouter();
 const user = computed(() => auth.user);
 const defaultAvatar = 
   "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&s=40";
+
+const goHome = () => {
+  router.push("/");
+}
 
 const goLogin = () => {
   router.push("/login");
@@ -79,6 +83,7 @@ const doLogout = () => {
   font-size: 22px;
   font-weight: 700;
   color: #0057ff;
+  user-select: none;
 }
 
 .logo {
